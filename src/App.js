@@ -16,8 +16,13 @@ class App extends Base {
   }
 
   mouseUp(e) {
+    e.preventDefault();
     const {innerWidth, innerHeight} = window;
     const {clientX, clientY} = e;
+    const {container, player} = this;
+
+    // console.log({e})
+    // console.log({container})
 
     let halfInnerWidth = ~~(innerWidth / 2);
     let halfInnerHeight = ~~(innerHeight / 2);
@@ -25,19 +30,19 @@ class App extends Base {
     console.log({halfInnerWidth, halfInnerHeight, clientX, clientY})
 
     if (clientX >= halfInnerWidth) {
-      console.log('A')
-      this.container.scrollLeft += clientX;
+      // console.log('A')
+      this.container.scrollLeft += (clientX - halfInnerWidth);
     } else if (clientX < halfInnerWidth) {
-      console.log('B')
-      this.container.scrollLeft -= clientX;
+      // console.log('B')
+      this.container.scrollLeft -= (halfInnerWidth - clientX);
     }
 
     if (clientY >= halfInnerHeight) {
-      console.log('C')
-      this.container.scrollTop += clientY;
+      // console.log('C')
+      this.container.scrollTop += (clientY - halfInnerHeight);
     } else if (clientY < halfInnerHeight) {
-      console.log('D')
-      this.container.scrollTop -= clientY;
+      // console.log('D')
+      this.container.scrollTop -= (halfInnerHeight - clientY);
     }
 
   }

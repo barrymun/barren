@@ -17,6 +17,7 @@
 }
 
 .map {
+  padding: 100px;
   width: 4000px;
   height: 4000px;
   /*graph paper like view*/
