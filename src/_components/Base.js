@@ -21,11 +21,11 @@ class Base extends React.Component {
 
   /**
    *
-   * @param seconds: the time in seconds
+   * @param ms: the time in ms
    * @returns {Promise<>}
    */
-  sleep(seconds) {
-    return new Promise(r => setTimeout(r, seconds * 1000));
+  sleep(ms) {
+    return new Promise(r => setTimeout(r, ms));
   }
 
 }

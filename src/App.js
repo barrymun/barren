@@ -17,31 +17,42 @@ class App extends Base {
 
   mouseUp(e) {
     e.preventDefault();
-    const {innerWidth, innerHeight} = window;
+
     const {clientX, clientY} = e;
+
+    this.move({clientX, clientY})
+  }
+
+  async move(params) {
+    const {innerWidth, innerHeight} = window;
+    const {clientX, clientY} = params;
     // const {container, player} = this;
 
     let halfInnerWidth = ~~(innerWidth / 2);
     let halfInnerHeight = ~~(innerHeight / 2);
 
-    console.log({halfInnerWidth, halfInnerHeight, clientX, clientY})
+    // console.log({halfInnerWidth, halfInnerHeight, clientX, clientY})
 
-    if (clientX >= halfInnerWidth) {
-      this.container.scrollLeft += (clientX - halfInnerWidth);
-    } else if (clientX < halfInnerWidth) {
-      this.container.scrollLeft -= (halfInnerWidth - clientX);
+    let i = 0;
+    let limit = 20;
+    let timeout = 20;
+
+    while (i < limit) {
+      if (clientX >= halfInnerWidth) {
+        this.container.scrollLeft += ~~((clientX - halfInnerWidth) / limit);
+      } else if (clientX < halfInnerWidth) {
+        this.container.scrollLeft -= ~~((halfInnerWidth - clientX) / limit);
+      }
+
+      if (clientY >= halfInnerHeight) {
+        this.container.scrollTop += ~~((clientY - halfInnerHeight) / limit);
+      } else if (clientY < halfInnerHeight) {
+        this.container.scrollTop -= ~~((halfInnerHeight - clientY) / limit);
+      }
+
+      i += 1;
+      await this.sleep(timeout);
     }
-
-    if (clientY >= halfInnerHeight) {
-      this.container.scrollTop += (clientY - halfInnerHeight);
-    } else if (clientY < halfInnerHeight) {
-      this.container.scrollTop -= (halfInnerHeight - clientY);
-    }
-
-  }
-
-  async move() {
-    // await this.sleep(2);
   }
 
   componentDidMount() {
