@@ -2,13 +2,26 @@ import React from 'react';
 import './App.css';
 import {Base} from "./_components";
 
-const {
-  innerWidth,
+let innerWidth,
   innerHeight,
-} = window;
-const halfInnerWidth = innerWidth / 2;
-const halfInnerHeight = innerHeight / 2;
+  halfInnerWidth,
+  halfInnerHeight;
 
+function setWindowVars() {
+  ({
+    innerWidth,
+    innerHeight,
+  } = window);
+  halfInnerWidth = innerWidth / 2;
+  halfInnerHeight = innerHeight / 2;
+}
+
+setWindowVars();
+
+
+/**
+ *
+ */
 class App extends Base {
 
   state = {
@@ -35,6 +48,7 @@ class App extends Base {
     super(props);
     this.container = React.createRef();
     this.player = React.createRef();
+    this.resize = this.resize.bind(this);
     this.mouseUp = this.mouseUp.bind(this);
     this.move = this.move.bind(this);
     this.chase = this.chase.bind(this);
@@ -42,13 +56,35 @@ class App extends Base {
 
 
   async componentDidMount() {
+
+    /**
+     * attaching event listeners
+     */
+    window.addEventListener('resize', this.resize);
     this.container.addEventListener('mouseup', this.mouseUp);
-    window.setInterval(this.chase, 20);
+    // window.setInterval(this.chase, 20);
+
   }
 
 
   componentWillUnmount() {
+
+    /**
+     * destroying event listeners
+     */
+    window.removeEventListener('resize', this.resize);
     this.container.removeEventListener('mouseup', this.mouseUp);
+
+  }
+
+
+  /**
+   * catch window sizing events as the app depends on window variables
+   *
+   * @param e
+   */
+  resize(e) {
+    setWindowVars();
   }
 
 
