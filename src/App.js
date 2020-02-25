@@ -4,6 +4,10 @@ import {Base} from "./_components";
 
 class App extends Base {
 
+  state = {
+    xPos: 0,
+    yPos: 0,
+  };
   container = null;
   player = null;
   canMove = true;
@@ -16,18 +20,27 @@ class App extends Base {
     this.move = this.move.bind(this);
   }
 
+
+  /**
+   *
+   * @param e
+   * @returns {Promise<void>}
+   */
   async mouseUp(e) {
     e.preventDefault();
-
     const {clientX, clientY} = e;
-
     await this.move({clientX, clientY})
   }
 
+
+  /**
+   *
+   * @param params
+   * @returns {Promise<>}
+   */
   async move(params) {
     const {innerWidth, innerHeight} = window;
     const {clientX, clientY} = params;
-    // const {container, player} = this;
 
     if (!this.canMove) return new Promise(resolve => resolve());
     this.canMove = false;
@@ -36,7 +49,7 @@ class App extends Base {
     let halfInnerHeight = ~~(innerHeight / 2);
     let baseVelocity = 4;
     let xVelocity, yVelocity;
-    let timeout = 20;
+    let timeout = 30;
 
     // x-axis (_d1 & _d2 will be the same, but one will be negative)
     let _d1 = clientX - halfInnerWidth;
@@ -77,6 +90,7 @@ class App extends Base {
 
       if (((_d1 === 0) || (_d2 === 0)) && ((_d3 === 0) || (_d4 === 0))) break;
 
+      await this.setStateAsync({xPos: this.container.scrollLeft, yPos: this.container.scrollTop});
       await this.sleep(timeout);
     }
 
@@ -84,20 +98,32 @@ class App extends Base {
 
   }
 
+
   componentDidMount() {
     this.container.addEventListener('mouseup', this.mouseUp);
   }
+
 
   componentWillUnmount() {
     this.container.removeEventListener('mouseup', this.mouseUp);
   }
 
+
   render() {
+    const {
+      xPos,
+      yPos,
+    } = this.state;
+
     return (<div ref={node => this.container = node} className={`container`}>
+      <div className={`coords`}>
+        {xPos}, {yPos}
+      </div>
       <div ref={node => this.player = node} className={`player`}/>
       <div className={`map`}/>
     </div>);
   }
+
 }
 
 export {App};
