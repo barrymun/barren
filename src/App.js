@@ -34,44 +34,45 @@ class App extends Base {
 
     let halfInnerWidth = ~~(innerWidth / 2);
     let halfInnerHeight = ~~(innerHeight / 2);
-
-    // console.log({halfInnerWidth, halfInnerHeight, clientX, clientY})
-
-    // let i = 0;
-    // let limit = 20;
-    let velocity = 4;
+    let baseVelocity = 4;
+    let xVelocity, yVelocity;
     let timeout = 20;
-    // let timeout = 100;
 
+    // x-axis (_d1 & _d2 will be the same, but one will be negative)
     let _d1 = clientX - halfInnerWidth;
     let _d2 = halfInnerWidth - clientX;
+
+    // y-axis (_d3 & _d4 will be the same, ...)
     let _d3 = clientY - halfInnerHeight;
     let _d4 = halfInnerHeight - clientY;
 
-    // console.log({_d1, _d2, _d3, _d4})
+    let _absd1 = Math.abs(_d1);
+    let _absd3 = Math.abs(_d3);
+
+    if (_absd1 >= _absd3) {
+      xVelocity = _absd1 / (_absd3 / baseVelocity);
+      yVelocity = baseVelocity;
+    } else {
+      xVelocity = baseVelocity;
+      yVelocity = _absd3 / (_absd1 / baseVelocity);
+    }
 
     while (true) {
 
       if (clientX >= halfInnerWidth) {
-        this.container.scrollLeft += (_d1 > velocity) ? velocity : _d1;
-        _d1 -= (_d1 > velocity) ? velocity : _d1;
+        this.container.scrollLeft += (_d1 > xVelocity) ? xVelocity : _d1;
+        _d1 -= (_d1 > xVelocity) ? xVelocity : _d1;
       } else if (clientX < halfInnerWidth) {
-        this.container.scrollLeft -= (_d2 > velocity) ? velocity : _d2;
-        _d2 -= (_d2 > velocity) ? velocity : _d2;
+        this.container.scrollLeft -= (_d2 > xVelocity) ? xVelocity : _d2;
+        _d2 -= (_d2 > xVelocity) ? xVelocity : _d2;
       }
 
       if (clientY >= halfInnerHeight) {
-        this.container.scrollTop += (_d3 > velocity) ? velocity : _d3;
-        _d3 -= (_d3 > velocity) ? velocity : _d3;
+        this.container.scrollTop += (_d3 > yVelocity) ? yVelocity : _d3;
+        _d3 -= (_d3 > yVelocity) ? yVelocity : _d3;
       } else if (clientY < halfInnerHeight) {
-        this.container.scrollTop -= (_d4 > velocity) ? velocity : _d4;
-        _d4 -= (_d4 > velocity) ? velocity : _d4;
-      }
-
-      // console.log({_d1, _d2, _d3, _d4})
-
-      if (((_d1 || _d2) === 0) && ((_d3 || _d4) === 0)) {
-        break
+        this.container.scrollTop -= (_d4 > yVelocity) ? yVelocity : _d4;
+        _d4 -= (_d4 > yVelocity) ? yVelocity : _d4;
       }
 
       if (((_d1 === 0) || (_d2 === 0)) && ((_d3 === 0) || (_d4 === 0))) break;
