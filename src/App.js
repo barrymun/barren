@@ -2,11 +2,18 @@ import React from 'react';
 import './App.css';
 import {Base} from "./_components";
 
+const {
+  innerWidth,
+  innerHeight,
+} = window;
+const halfInnerWidth = innerWidth / 2;
+const halfInnerHeight = innerHeight / 2;
+
 class App extends Base {
 
   state = {
-    xPos: 0,
-    yPos: 0,
+    xPos: halfInnerWidth,
+    yPos: halfInnerHeight,
     enemies: [
       {health: 100, position: {left: 10, top: 10}},
       {health: 100, position: {left: 10, top: 40}},
@@ -34,9 +41,9 @@ class App extends Base {
   }
 
 
-  componentDidMount() {
+  async componentDidMount() {
     this.container.addEventListener('mouseup', this.mouseUp);
-    // window.setInterval(this.chase, 50);
+    window.setInterval(this.chase, 100);
   }
 
 
@@ -63,16 +70,13 @@ class App extends Base {
    * @returns {Promise<>}
    */
   async move(params) {
-    const {innerWidth, innerHeight} = window;
     const {clientX, clientY} = params;
 
     if (!this.canMove) return new Promise(resolve => resolve());
     this.canMove = false;
 
-    let halfInnerWidth = ~~(innerWidth / 2);
-    let halfInnerHeight = ~~(innerHeight / 2);
     let baseVelocity = 4;
-    let maxVelocity = 16;  // TODO: determine optimal value
+    let maxVelocity = 10;  // TODO: determine optimal value
     let xVelocity, yVelocity;
     let timeout = 30;
 
@@ -118,7 +122,10 @@ class App extends Base {
 
       if (((_d1 === 0) || (_d2 === 0)) && ((_d3 === 0) || (_d4 === 0))) break;
 
-      await this.setStateAsync({xPos: this.container.scrollLeft, yPos: this.container.scrollTop});
+      await this.setStateAsync({
+        xPos: this.container.scrollLeft + halfInnerWidth,
+        yPos: this.container.scrollTop + halfInnerHeight,
+      });
       await this.sleep(timeout);
     }
 
@@ -132,16 +139,41 @@ class App extends Base {
    * @returns {Promise<void>}
    */
   async chase() {
-    const {enemies} = this.state;
+    const {
+      xPos,
+      yPos,
+      enemies,
+    } = this.state;
 
-    let r = enemies.map(o => ({
-      ...o,
-      position: {
-        ...o.position,
-        left: o.position.left += 2,
-        top: o.position.top += 2,
+    let r = enemies.map(o => {
+      let l = o.position.left;
+      let t = o.position.top;
+
+      if (xPos > l) {
+        l += 5
+      } else if (xPos === l) {
+        // TODO:
+      } else {
+        l -= 5;
       }
-    }));
+
+      if (yPos > t) {
+        t += 5;
+      } else if (yPos === t) {
+        // TODO:
+      } else {
+        t -= 5;
+      }
+
+      return {
+        ...o,
+        position: {
+          ...o.position,
+          left: l,
+          top: t,
+        }
+      };
+    });
 
     await this.setStateAsync({enemies: r})
   }
