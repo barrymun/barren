@@ -43,7 +43,7 @@ class App extends Base {
 
   async componentDidMount() {
     this.container.addEventListener('mouseup', this.mouseUp);
-    // window.setInterval(this.chase, 50);
+    window.setInterval(this.chase, 20);
   }
 
 
@@ -182,25 +182,26 @@ class App extends Base {
       enemies,
     } = this.state;
 
-    let d = 3;
+    let d = 1;
+    let detectionRange = 3;
 
     let r = enemies.map(o => {
       let l = o.position.left;
       let t = o.position.top;
 
-      if (xPos > l) {
+      if (xPos > l + detectionRange) {
         l += d;
-      } else if (xPos === l) {
-        // TODO:
-      } else {
+      } else if ((xPos - detectionRange <= l) && (l <= xPos + detectionRange)) {
+        // TODO: collision
+      } else if (xPos < l - detectionRange) {
         l -= d;
       }
 
-      if (yPos > t) {
+      if (yPos > t + detectionRange) {
         t += d;
-      } else if (yPos === t) {
-        // TODO:
-      } else {
+      } else if ((yPos - detectionRange <= t) && (t <= yPos + detectionRange)) {
+        // TODO: collision
+      } else if (yPos < t - detectionRange) {
         t -= d;
       }
 
