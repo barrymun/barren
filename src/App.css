@@ -17,7 +17,7 @@
 }
 
 .map {
-  padding: 100px;
+  /*padding: 100px;*/
   width: 4000px;
   height: 4000px;
   /*graph paper like view*/
@@ -48,4 +48,17 @@
   left: 0;
   width: 200px;
   height: 100px;
+}
+
+.enemy {
+  position: absolute;
+  background-color: orange;
+  width: 10px;
+  height: 10px;
+  /*internal border*/
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  border-radius: 3px;
+  border: 1px solid black;
 }

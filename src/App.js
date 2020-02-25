@@ -7,6 +7,18 @@ class App extends Base {
   state = {
     xPos: 0,
     yPos: 0,
+    enemies: [
+      {health: 100, position: {left: 10, top: 10}},
+      {health: 100, position: {left: 10, top: 40}},
+      {health: 100, position: {left: 10, top: 70}},
+      {health: 100, position: {left: 10, top: 100}},
+      {health: 100, position: {left: 10, top: 130}},
+      {health: 100, position: {left: 10, top: 160}},
+      {health: 100, position: {left: 10, top: 190}},
+      {health: 100, position: {left: 10, top: 220}},
+      {health: 100, position: {left: 10, top: 250}},
+      {health: 100, position: {left: 10, top: 280}},
+    ],
   };
   container = null;
   player = null;
@@ -18,6 +30,18 @@ class App extends Base {
     this.player = React.createRef();
     this.mouseUp = this.mouseUp.bind(this);
     this.move = this.move.bind(this);
+    this.chase = this.chase.bind(this);
+  }
+
+
+  componentDidMount() {
+    this.container.addEventListener('mouseup', this.mouseUp);
+    // window.setInterval(this.chase, 50);
+  }
+
+
+  componentWillUnmount() {
+    this.container.removeEventListener('mouseup', this.mouseUp);
   }
 
 
@@ -99,13 +123,23 @@ class App extends Base {
   }
 
 
-  componentDidMount() {
-    this.container.addEventListener('mouseup', this.mouseUp);
-  }
+  /**
+   *
+   * @returns {Promise<void>}
+   */
+  async chase() {
+    const {enemies} = this.state;
 
+    let r = enemies.map(o => ({
+      ...o,
+      position: {
+        ...o.position,
+        left: o.position.left += 2,
+        top: o.position.top += 2,
+      }
+    }));
 
-  componentWillUnmount() {
-    this.container.removeEventListener('mouseup', this.mouseUp);
+    await this.setStateAsync({enemies: r})
   }
 
 
@@ -113,6 +147,7 @@ class App extends Base {
     const {
       xPos,
       yPos,
+      enemies,
     } = this.state;
 
     return (<div ref={node => this.container = node} className={`container`}>
@@ -120,7 +155,12 @@ class App extends Base {
         {xPos}, {yPos}
       </div>
       <div ref={node => this.player = node} className={`player`}/>
-      <div className={`map`}/>
+      <div className={`map`}>
+        {enemies.map((o, index) => (<div
+          key={index}
+          className={`enemy`}
+          style={{...o.position}}/>))}
+      </div>
     </div>);
   }
 
