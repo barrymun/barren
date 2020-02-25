@@ -72,6 +72,7 @@ class App extends Base {
     let halfInnerWidth = ~~(innerWidth / 2);
     let halfInnerHeight = ~~(innerHeight / 2);
     let baseVelocity = 4;
+    let maxVelocity = 16;  // TODO: determine optimal value
     let xVelocity, yVelocity;
     let timeout = 30;
 
@@ -93,6 +94,9 @@ class App extends Base {
       xVelocity = baseVelocity;
       yVelocity = _absd3 / (_absd1 / baseVelocity);
     }
+
+    if (xVelocity > maxVelocity) xVelocity = maxVelocity;
+    if (yVelocity > maxVelocity) yVelocity = maxVelocity;
 
     while (true) {
 
