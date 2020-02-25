@@ -14,6 +14,7 @@ class App extends Base {
   state = {
     xPos: halfInnerWidth,
     yPos: halfInnerHeight,
+    moveToken: null,  // used for move calcs - determines if a move should be cancelled to make way for another move() call
     enemies: [
       {health: 100, position: {left: 10, top: 10}},
       {health: 100, position: {left: 10, top: 40}},
@@ -29,7 +30,6 @@ class App extends Base {
   };
   container = null;
   player = null;
-  canMove = true;
 
   constructor(props) {
     super(props);
@@ -43,7 +43,7 @@ class App extends Base {
 
   async componentDidMount() {
     this.container.addEventListener('mouseup', this.mouseUp);
-    window.setInterval(this.chase, 100);
+    // window.setInterval(this.chase, 50);
   }
 
 
@@ -53,14 +53,31 @@ class App extends Base {
 
 
   /**
+   * handle mouseup events
+   *
+   * *** cancellation required, see below
+   * some nifty examples in here: https://blog.bloomca.me/2017/12/04/how-to-cancel-your-promise.html
    *
    * @param e
    * @returns {Promise<void>}
    */
   async mouseUp(e) {
+
     e.preventDefault();
+
     const {clientX, clientY} = e;
-    await this.move({clientX, clientY})
+    let {moveToken} = this.state;
+
+    // cancel if a previous move has been made
+    if (moveToken != null) moveToken.cancel();
+
+    // reset the moveToken
+    await this.setStateAsync({moveToken: {}});
+
+    // redeclare the moveToken so this can be cancelled on the subsequent move (if required)
+    ({moveToken} = this.state);
+
+    await this.move({clientX, clientY, token: moveToken});
   }
 
 
@@ -70,15 +87,32 @@ class App extends Base {
    * @returns {Promise<>}
    */
   async move(params) {
-    const {clientX, clientY} = params;
 
-    if (!this.canMove) return new Promise(resolve => resolve());
-    this.canMove = false;
+    const {
+      clientX,
+      clientY,
+      token,
+    } = params;
 
-    let baseVelocity = 4;
-    let maxVelocity = 10;  // TODO: determine optimal value
+    /**
+     * (handling cancellations)
+     * this allows the player to perform another move, even if the current move is still in effect,
+     * as the currently in effect move will be aborted
+     *
+     * @type {boolean}
+     */
+    let cancelled = false;
+    token.cancel = () => {
+      cancelled = true;
+    };
+
+    // returning an empty promise to indicate that the calculations are to be concluded (undefined)
+    let ex = new Promise(resolve => resolve());
+
+    let baseVelocity = 3;
+    let maxVelocity = 6;  // TODO: determine optimal value
     let xVelocity, yVelocity;
-    let timeout = 30;
+    let timeout = 20;
 
     // x-axis (_d1 & _d2 will be the same, but one will be negative)
     let _d1 = clientX - halfInnerWidth;
@@ -103,6 +137,11 @@ class App extends Base {
     if (yVelocity > maxVelocity) yVelocity = maxVelocity;
 
     while (true) {
+
+      /**
+       * check that the current move has not been cancelled
+       */
+      if (cancelled) return ex;
 
       if (clientX >= halfInnerWidth) {
         this.container.scrollLeft += (_d1 > xVelocity) ? xVelocity : _d1;
@@ -129,8 +168,6 @@ class App extends Base {
       await this.sleep(timeout);
     }
 
-    this.canMove = true;
-
   }
 
 
@@ -145,24 +182,26 @@ class App extends Base {
       enemies,
     } = this.state;
 
+    let d = 3;
+
     let r = enemies.map(o => {
       let l = o.position.left;
       let t = o.position.top;
 
       if (xPos > l) {
-        l += 5
+        l += d;
       } else if (xPos === l) {
         // TODO:
       } else {
-        l -= 5;
+        l -= d;
       }
 
       if (yPos > t) {
-        t += 5;
+        t += d;
       } else if (yPos === t) {
         // TODO:
       } else {
-        t -= 5;
+        t -= d;
       }
 
       return {
