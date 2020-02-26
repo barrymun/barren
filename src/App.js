@@ -49,9 +49,10 @@ class App extends Base {
     this.container = React.createRef();
     this.player = React.createRef();
     this.resize = this.resize.bind(this);
-    this.mouseUp = this.mouseUp.bind(this);
+    this.mouseMove = this.mouseMove.bind(this);
     this.move = this.move.bind(this);
     this.chase = this.chase.bind(this);
+    this.shoot = this.shoot.bind(this);
   }
 
 
@@ -61,7 +62,7 @@ class App extends Base {
      * attaching event listeners
      */
     window.addEventListener('resize', this.resize);
-    this.container.addEventListener('mouseup', this.mouseUp);
+    this.container.addEventListener('mousemove', this.mouseMove);
     // window.setInterval(this.chase, 20);
 
   }
@@ -73,7 +74,7 @@ class App extends Base {
      * destroying event listeners
      */
     window.removeEventListener('resize', this.resize);
-    this.container.removeEventListener('mouseup', this.mouseUp);
+    this.container.removeEventListener('mousemove', this.mouseMove);
 
   }
 
@@ -89,7 +90,7 @@ class App extends Base {
 
 
   /**
-   * handle mouseup events
+   * handle mousemove events
    *
    * *** cancellation required, see below
    * some nifty examples in here: https://blog.bloomca.me/2017/12/04/how-to-cancel-your-promise.html
@@ -97,7 +98,7 @@ class App extends Base {
    * @param e
    * @returns {Promise<void>}
    */
-  async mouseUp(e) {
+  async mouseMove(e) {
 
     e.preventDefault();
 
@@ -145,8 +146,8 @@ class App extends Base {
     // returning an empty promise to indicate that the calculations are to be concluded (undefined)
     let ex = new Promise(resolve => resolve());
 
-    let baseVelocity = 3;
-    let maxVelocity = 6;  // TODO: determine optimal value
+    let baseVelocity = 1;
+    let maxVelocity = 2;  // TODO: determine optimal value
     let xVelocity, yVelocity;
     let timeout = 20;
 
@@ -253,6 +254,13 @@ class App extends Base {
 
     await this.setStateAsync({enemies: r})
   }
+
+
+  /**
+   *
+   * @returns {Promise<void>}
+   */
+  async shoot() {}
 
 
   render() {
