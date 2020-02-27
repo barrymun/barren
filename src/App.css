@@ -22,9 +22,17 @@
   /*padding: 100px;*/
   width: 4000px;
   height: 4000px;
+
   /*graph paper like view*/
   background-size: 40px 40px;
   background-image: radial-gradient(circle, #000000 1px, rgba(0, 0, 0, 0) 1px);
+
+  /*internal border*/
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  border-radius: 3px;
+  /*border: 400px solid black;*/
 }
 
 .player {

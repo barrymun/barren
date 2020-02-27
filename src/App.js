@@ -42,12 +42,15 @@ class App extends Base {
     ],
   };
   container = null;
+  map = null;
   player = null;
 
   constructor(props) {
     super(props);
     this.container = React.createRef();
+    this.map = React.createRef();
     this.player = React.createRef();
+    this.setMapBorder = this.setMapBorder.bind(this);
     this.resize = this.resize.bind(this);
     this.mouseMove = this.mouseMove.bind(this);
     this.move = this.move.bind(this);
@@ -61,6 +64,7 @@ class App extends Base {
     /**
      * attaching event listeners
      */
+    this.setMapBorder();
     window.addEventListener('resize', this.resize);
     this.container.addEventListener('mousemove', this.mouseMove);
     // window.setInterval(this.chase, 20);
@@ -80,12 +84,24 @@ class App extends Base {
 
 
   /**
+   * visual internal border to show where player can and cannot move
+   */
+  setMapBorder() {
+    this.map.style.borderLeft = `${~~halfInnerWidth}px solid black`;
+    this.map.style.borderRight = `${~~halfInnerWidth}px solid black`;
+    this.map.style.borderTop = `${~~halfInnerHeight}px solid black`;
+    this.map.style.borderBottom = `${~~halfInnerHeight}px solid black`;
+  }
+
+
+  /**
    * catch window sizing events as the app depends on window variables
    *
    * @param e
    */
   resize(e) {
     setWindowVars();
+    this.setMapBorder();
   }
 
 
@@ -119,6 +135,7 @@ class App extends Base {
 
 
   /**
+   * TODO: improve ...
    *
    * @param params
    * @returns {Promise<>}
@@ -146,8 +163,8 @@ class App extends Base {
     // returning an empty promise to indicate that the calculations are to be concluded (undefined)
     let ex = new Promise(resolve => resolve());
 
-    let baseVelocity = 1;
-    let maxVelocity = 2;  // TODO: determine optimal value
+    let baseVelocity = 2;
+    let maxVelocity = 3;  // TODO: determine optimal value
     let xVelocity, yVelocity;
     let timeout = 20;
 
@@ -274,13 +291,13 @@ class App extends Base {
       <div className={`coords`}>
         {xPos}, {yPos}
       </div>
-      <div ref={node => this.player = node} className={`player`}/>
-      <div className={`map`}>
+      <div ref={node => this.map = node} className={`map`}>
         {enemies.map((o, index) => (<div
           key={index}
           className={`enemy`}
           style={{...o.position}}/>))}
       </div>
+      <div ref={node => this.player = node} className={`player`}/>
     </div>);
   }
 
