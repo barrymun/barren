@@ -33,6 +33,7 @@
   -webkit-box-sizing: border-box;
   border-radius: 3px;
   /*border: 400px solid black;*/
+  border: 0; /*default*/
 }
 
 .player {

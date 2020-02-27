@@ -2,15 +2,20 @@ import React from 'react';
 import './App.css';
 import {Base} from "./_components";
 
-let innerWidth,
-  innerHeight,
-  halfInnerWidth,
-  halfInnerHeight;
+let innerWidth
+  , innerHeight
+  , halfInnerWidth
+  , halfInnerHeight
+  // ,scrollX,
+  // ,scrollY
+;
 
 function setWindowVars() {
   ({
     innerWidth,
     innerHeight,
+    // scrollX,
+    // scrollY,
   } = window);
   halfInnerWidth = innerWidth / 2;
   halfInnerHeight = innerHeight / 2;
@@ -67,7 +72,7 @@ class App extends Base {
     this.setMapBorder();
     window.addEventListener('resize', this.resize);
     this.container.addEventListener('mousemove', this.mouseMove);
-    // window.setInterval(this.chase, 20);
+    window.setInterval(this.chase, 20);
 
   }
 
@@ -241,21 +246,23 @@ class App extends Base {
 
     let r = enemies.map(o => {
       let l = o.position.left;
+      let _l = l + parseInt(this.map.style.borderLeftWidth);
       let t = o.position.top;
+      let _t = o.position.top + parseInt(this.map.style.borderTopWidth);
 
-      if (xPos > l + detectionRange) {
+      if (xPos > _l + detectionRange) {
         l += d;
-      } else if ((xPos - detectionRange <= l) && (l <= xPos + detectionRange)) {
+      } else if ((xPos - detectionRange <= _l) && (_l <= xPos + detectionRange)) {
         // TODO: collision
-      } else if (xPos < l - detectionRange) {
+      } else if (xPos < _l - detectionRange) {
         l -= d;
       }
 
-      if (yPos > t + detectionRange) {
+      if (yPos > _t + detectionRange) {
         t += d;
-      } else if ((yPos - detectionRange <= t) && (t <= yPos + detectionRange)) {
+      } else if ((yPos - detectionRange <= _t) && (_t <= yPos + detectionRange)) {
         // TODO: collision
-      } else if (yPos < t - detectionRange) {
+      } else if (yPos < _t - detectionRange) {
         t -= d;
       }
 
@@ -277,7 +284,8 @@ class App extends Base {
    *
    * @returns {Promise<void>}
    */
-  async shoot() {}
+  async shoot() {
+  }
 
 
   render() {
